@@ -18,7 +18,7 @@ fi
 
 TMP_DIR=$(mktemp -d)
 
-echo "⬇️  Cloning template..."
+echo "Cloning template..."
 git clone --depth 1 "$REPO" "$TMP_DIR"
 
 echo "Copying .devcontainer..."
@@ -27,5 +27,6 @@ mv "$TMP_DIR/.devcontainer" .
 # Remove git metadata
 rm -rf "$TMP_DIR"
 
-echo "Devcontainer ready! Run:"
-echo "'devpod-cli up . --ide none'"
+echo "Starting devcontainer..."
+devpod-cli up . --ide none
+
