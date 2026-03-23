@@ -7,7 +7,7 @@ echo "Installing devcontainer template..."
 
 # Check for existing .devcontainer
 if [ -d ".devcontainer" ]; then
-  echo "⚠️  .devcontainer already exists."
+  echo ".devcontainer already exists."
   read -p "Overwrite it? (y/N): " confirm
   if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo "Aborted."
