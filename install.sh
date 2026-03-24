@@ -27,6 +27,6 @@ mv "$TMP_DIR/.devcontainer" .
 # Remove git metadata
 rm -rf "$TMP_DIR"
 
-echo "Starting devcontainer..."
-devpod-cli up . --ide none
+echo "You can now start the devcontainer. Run::"
+echo "devpod-cli up . --ide none"
 
