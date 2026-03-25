@@ -27,11 +27,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   python3-pip \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Ensure default node user has access to /usr/local/share
-RUN mkdir -p /usr/local/share/npm-global && \
-  chown -R node:node /usr/local/share
+# Rename built-in node user to devc
+RUN usermod -l devc node && \
+  groupmod -n devc node && \
+  usermod -d /home/devc -m devc
 
-ARG USERNAME=node
+# Ensure devc user has access to /usr/local/share
+RUN mkdir -p /usr/local/share/npm-global && \
+  chown -R devc:devc /usr/local/share
+
+ARG USERNAME=devc
 
 # Persist bash history.
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
@@ -42,9 +47,12 @@ RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhisto
 # Set `DEVCONTAINER` environment variable to help with orientation
 ENV DEVCONTAINER=true
 
+# Create tamper-resistant in-container marker (root-owned, non-root cannot modify)
+RUN echo "1" > /etc/devcontainer && chmod 444 /etc/devcontainer
+
 # Create workspace and config directories and set permissions
-RUN mkdir -p /workspace /home/node/.claude && \
-  chown -R node:node /workspace /home/node/.claude
+RUN mkdir -p /workspace /home/devc/.claude && \
+  chown -R devc:devc /workspace /home/devc/.claude
 
 WORKDIR /workspace
 
@@ -55,7 +63,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
 # Set up non-root user
-USER node
+USER devc
 
 # Install global packages
 ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
@@ -79,7 +87,7 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -x
 
 # Install uv, ruff, pyright
-ENV PATH=$PATH:/home/node/.local/bin
+ENV PATH=$PATH:/home/devc/.local/bin
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
   uv tool install ruff && \
   uv tool install pyright
@@ -94,6 +102,6 @@ COPY init-firewall.sh /usr/local/bin/
 
 USER root
 RUN chmod +x /usr/local/bin/init-firewall.sh && \
-  echo "node ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall && \
-  chmod 0440 /etc/sudoers.d/node-firewall
-USER node
+  echo "devc ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/devc-firewall && \
+  chmod 0440 /etc/sudoers.d/devc-firewall
+USER devc
