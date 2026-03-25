@@ -67,7 +67,6 @@ done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 for domain in \
     "registry.npmjs.org" \
     "pypi.org" \
-    "files.pythonhosted.org" \
     "huggingface.co" \
     "cdn-lfs.huggingface.co" \
     "api.anthropic.com" \
