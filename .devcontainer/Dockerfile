@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   jq \
   nano \
   vim \
+  python3 \
+  python3-pip \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Ensure default node user has access to /usr/local/share
@@ -75,6 +77,12 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "source /usr/share/doc/fzf/examples/completion.zsh" \
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
+
+# Install uv, ruff, pyright
+ENV PATH=$PATH:/home/node/.local/bin
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+  uv tool install ruff && \
+  uv tool install pyright
 
 # Install Claude
 RUN curl -fsSL https://claude.ai/install.sh | bash
