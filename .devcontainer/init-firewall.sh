@@ -68,7 +68,6 @@ for domain in \
     "registry.npmjs.org" \
     "pypi.org" \
     "huggingface.co" \
-    "cdn-lfs.huggingface.co" \
     "api.anthropic.com" \
     "sentry.io" \
     "statsig.anthropic.com" \
