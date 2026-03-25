@@ -19,7 +19,8 @@
   "mounts": [
     "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
     "source=${localEnv:HOME}/.claude,target=/home/devc/.claude,type=bind",
-    "source=${localEnv:HOME}/.config/gh,target=/home/devc/.config/gh,type=bind,readonly"
+    "source=${localEnv:HOME}/.config/gh,target=/home/devc/.config/gh,type=bind,readonly",
+    "source=${localEnv:HOME}/.cache/huggingface,target=/home/devc/.cache/huggingface,type=bind"
   ],
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
