@@ -28,13 +28,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   tmux \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set shell to zsh
-RUN chsh -s /bin/zsh devc
-
 # Rename built-in node user to devc
 RUN usermod -l devc node && \
   groupmod -n devc node && \
   usermod -d /home/devc -m devc
+
+# Set shell to zsh
+RUN chsh -s /bin/zsh devc
 
 # Ensure devc user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
@@ -109,3 +109,4 @@ RUN chmod +x /usr/local/bin/init-firewall.sh && \
   echo "devc ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/devc-firewall && \
   chmod 0440 /etc/sudoers.d/devc-firewall
 USER devc
+ENV SHELL=/bin/zsh
