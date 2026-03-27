@@ -28,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   tmux \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Set shell to zsh
+RUN chsh -s /bin/zsh devc
+
 # Rename built-in node user to devc
 RUN usermod -l devc node && \
   groupmod -n devc node && \
