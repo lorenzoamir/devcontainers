@@ -33,6 +33,10 @@ RUN usermod -l devc node && \
   groupmod -n devc node && \
   usermod -d /home/devc -m devc
 
+# Install zsh plugins/themes
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions /usr/share/zsh/plugins/zsh-autosuggestions \
+    && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /usr/share/zsh-theme-powerlevel10k
+
 # Set shell to zsh
 RUN chsh -s /bin/zsh devc
 
