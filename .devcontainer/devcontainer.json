@@ -20,15 +20,13 @@
     "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
     "source=${localEnv:HOME}/.claude,target=/home/devc/.claude,type=bind",
     "source=${localEnv:HOME}/.config/gh,target=/home/devc/.config/gh,type=bind,readonly",
-    "source=${localEnv:HOME}/.cache/huggingface,target=/home/devc/.cache/huggingface,type=bind",
-    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent.socket,type=bind"
+    "source=${localEnv:HOME}/.cache/huggingface,target=/home/devc/.cache/huggingface,type=bind"
   ],
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "CLAUDE_CONFIG_DIR": "/home/devc/.claude",
     "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
-    "GH_TOKEN": "${localEnv:GH_TOKEN}",
-    "SSH_AUTH_SOCK": "/ssh-agent.socket"
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
