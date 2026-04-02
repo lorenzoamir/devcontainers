@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
   less \
   git \
   procps \
-  fzf \
   zsh \
   man-db \
   unzip \
@@ -99,7 +98,6 @@ ENV VISUAL=vim
 ARG ZSH_IN_DOCKER_VERSION=1.2.0
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
   -p git \
-  -p fzf \
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
