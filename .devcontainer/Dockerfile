@@ -1,20 +1,27 @@
-FROM node:20
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 ARG TZ
 ENV TZ="$TZ"
 ENV TERM=xterm-256color
 
-# Install basic development tools and iptables/ipset
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install Node.js 20 and gh CLI repos, then all tools
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg2 wget sudo \
+  && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+  && mkdir -p /etc/apt/keyrings \
+  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+     | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+  && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+     | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && apt-get update && apt-get install -y --no-install-recommends \
+  nodejs \
   less \
   git \
   procps \
-  sudo \
   fzf \
   zsh \
   man-db \
   unzip \
-  gnupg2 \
   gh \
   iptables \
   ipset \
@@ -27,25 +34,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   python3 \
   python3-pip \
   tmux \
+  locales \
+  openssh-client \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Locale
-RUN apt-get update && apt-get install -y locales \
-    && sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
+RUN sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
-# Rename built-in node user to devc
-RUN usermod -l devc node && \
-  groupmod -n devc node && \
-  usermod -d /home/devc -m devc
+# Create devc user (no 'node' user on CUDA image)
+RUN groupadd --gid 1000 devc && \
+  useradd --uid 1000 --gid devc --shell /bin/zsh --create-home devc
 
 # Install zsh plugins/themes
 RUN git clone https://github.com/zsh-users/zsh-autosuggestions /usr/share/zsh/plugins/zsh-autosuggestions \
     && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /usr/share/zsh-theme-powerlevel10k
-
-# Set shell to zsh
-RUN chsh -s /bin/zsh devc
 
 # Ensure devc user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
@@ -96,8 +100,6 @@ ARG ZSH_IN_DOCKER_VERSION=1.2.0
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
   -p git \
   -p fzf \
-  -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
-  -a "source /usr/share/doc/fzf/examples/completion.zsh" \
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
